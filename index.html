@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Widget - Olá Mundo</title>
+    <script src="https://unpkg.com/matrix-widget-api@latest/lib/api.min.js"></script>
+    <script src="url_args.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Enviar Mensagem</h1>
+    <button id="sendButton">Enviar Olá Mundo</button>
+    <div id="output">Logs aparecerão aqui.</div>
+
+    <script>
+        // Função para exibir logs
+        const log = (message) => {
+            const output = document.getElementById('output');
+            output.textContent += message + '\n';
+        };
+
+        // Inicializar Matrix Widget API
+        const widgetId = URL_args.matrix_widget_id;
+        const userId = URL_args.matrix_user_id;
+        const api = new MatrixWidgetApi(widgetId);
+
+        // Configurar API e permissões
+        api.requestCapabilityToSendEvent("m.room.message");
+        api.requestCapabilityToReceiveEvent("m.room.message");
+
+        api.sendContentLoaded(); // Notificar que o widget foi carregado
+
+        // Lidar com clique do botão
+        document.getElementById('sendButton').addEventListener('click', async () => {
+            const messageContent = {
+                "msgtype": "m.text",
+                "body": `usuário ${userId} diz: Olá Mundo`,
+                "format": "org.matrix.custom.html",
+                "formatted_body": `<p>usuário <b>${userId}</b> diz: Olá Mundo</p>`
+            };
+
+            try {
+                // Enviar mensagem
+                await api.sendEvent("m.room.message", messageContent);
+                log(`Mensagem enviada: ${messageContent.body}`);
+            } catch (error) {
+                log(`Erro ao enviar mensagem: ${error.message}`);
+            }
+        });
+
+        log(`Widget inicializado para o usuário ${userId}.`);
+    </script>
+</body>
+</html>
