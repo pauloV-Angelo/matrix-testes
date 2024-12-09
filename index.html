@@ -59,7 +59,7 @@
         // Lidar com clique do botão
         document.getElementById('sendButton').addEventListener('click', function () {
             const evt = "m.room.message";
-            const messageContent = {
+            const msg = {
                 "msgtype": "m.text",
                 "body": `usuário ${userId} diz: Olá Mundo`,
                 "format": "org.matrix.custom.html",
